@@ -68,16 +68,20 @@ void setup() {
   Serial.begin(115200);
 
   // Create the BLE Device
+  //创建BLE设备
   BLEDevice::init("UART Service");
 
   // Create the BLE Server
+  //创建BLE服务器
   pServer = BLEDevice::createServer();
   pServer->setCallbacks(new MyServerCallbacks());
 
   // Create the BLE Service
+  //创建BLE服务
   BLEService *pService = pServer->createService(SERVICE_UUID);
 
   // Create a BLE Characteristic
+  //创建BLE特征
   pTxCharacteristic = pService->createCharacteristic(CHARACTERISTIC_UUID_TX, BLECharacteristic::PROPERTY_NOTIFY);
 
   pTxCharacteristic->addDescriptor(new BLE2902());
@@ -87,9 +91,11 @@ void setup() {
   pRxCharacteristic->setCallbacks(new MyCallbacks());
 
   // Start the service
+  //启动服务
   pService->start();
 
   // Start advertising
+  //开始广播
   pServer->getAdvertising()->start();
   Serial.println("Waiting a client connection to notify...");
 }
@@ -100,10 +106,13 @@ void loop() {
     pTxCharacteristic->setValue(&txValue, 1);
     pTxCharacteristic->notify();
     txValue++;
-    delay(10);  // bluetooth stack will go into congestion, if too many packets are sent
+    delay(10);  
+    // bluetooth stack will go into congestion, if too many packets are sent
+    //如果发送的数据包太多，蓝牙堆栈将陷入拥塞
   }
 
   // disconnecting
+  //断开
   if (!deviceConnected && oldDeviceConnected) {
     delay(500);                   // give the bluetooth stack the chance to get things ready
     pServer->startAdvertising();  // restart advertising
@@ -113,6 +122,7 @@ void loop() {
   // connecting
   if (deviceConnected && !oldDeviceConnected) {
     // do stuff here on connecting
+    //在连接时在此处执行操作
     oldDeviceConnected = deviceConnected;
   }
 }
